@@ -26,7 +26,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 
 @RestController
-@RequestMapping("/sivimss/catalogos/externos")
+@RequestMapping("/catalogos/externos") 
 public class PeticionesController {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PeticionesController.class);
