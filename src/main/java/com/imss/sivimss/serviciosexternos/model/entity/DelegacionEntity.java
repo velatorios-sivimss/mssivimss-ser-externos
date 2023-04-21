@@ -1,0 +1,27 @@
+package com.imss.sivimss.serviciosexternos.model.entity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@SuppressWarnings("hiding")
+@Setter
+@Getter
+@Entity
+@Table(name = "SVC_DELEGACION")
+public class DelegacionEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_DELEGACION")
+	private Integer idDelegacion;
+
+	@Column(name = "DES_DELEGACION")
+	private String desDelegacion;
+}
