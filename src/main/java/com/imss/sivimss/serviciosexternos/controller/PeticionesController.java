@@ -91,7 +91,7 @@ public class PeticionesController {
 	 *
 	 * @return
 	 */
-	@GetMapping("/consultaDelegaciones")
+	@GetMapping("/consultar/delegaciones")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackCatalogo")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackCatalogo")
 	@TimeLimiter(name = "msflujo")
@@ -108,7 +108,7 @@ public class PeticionesController {
 	 * @param idDelegacion
 	 * @return
 	 */
-	@GetMapping("/consultaVelatorio/{idDelegacion}")
+	@GetMapping("/consultar/velatorios/{idDelegacion}")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackCatalogoVelacion")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackCatalogoVelacion")
 	@TimeLimiter(name = "msflujo")
@@ -125,7 +125,7 @@ public class PeticionesController {
 	 *
 	 * @return
 	 */
-	@GetMapping("/consultaNivel")
+	@GetMapping("/consultar/nivel")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackCatalogoNivel")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackCatalogoNivel")
 	@TimeLimiter(name = "msflujo")
