@@ -43,6 +43,11 @@ public class PeticionesController {
 	private PeticionesService peticionesServiceCodigoPostal;
 
 	@Autowired
+	@Qualifier("peticionesServiceSiapImpl")
+	private PeticionesService peticionesServiceSiap;
+	
+
+	@Autowired
 	private CatalogosService catalogoService;
 
 	@Autowired
@@ -132,6 +137,16 @@ public class PeticionesController {
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));
 	}
 
+	@GetMapping("/consultar/siap/{dato}")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>obtenerSiap(@PathVariable String dato,Authentication authentication) throws IOException{
+		Response<?> response= peticionesServiceSiap.consultarServicioExterno(dato, authentication);		
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));
+	}
+	
 	/**
 	 * 
 	 * fallbacks consulta

@@ -52,6 +52,7 @@ endpoints:
    sat: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/sat/rfc"
    sepomex: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/domicilios/asentamientos/codigoPostal"
    renapo: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/renapo/curp"
+   siap: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/siap/matricula"
   
 jwt:
   login: funcionamuybienlogin
