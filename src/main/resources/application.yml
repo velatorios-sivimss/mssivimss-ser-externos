@@ -94,4 +94,4 @@ resilience4j.timelimiter:
 correo:
   remitente: ${msit_TIEMPO_DURACION}
 
-ruta-log: ${msit_REMITENTE}
+ruta-log: ${msit_RUTA_LOG}
