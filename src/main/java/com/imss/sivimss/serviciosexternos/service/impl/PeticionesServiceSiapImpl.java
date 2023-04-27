@@ -1,7 +1,6 @@
 package com.imss.sivimss.serviciosexternos.service.impl;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -35,6 +34,5 @@ public class PeticionesServiceSiapImpl implements PeticionesService{
 		Response<?>response=providerRestTemplate.consumirServicioExternoGet(urlSiap+"/"+dato);
 		return MensajeResponseUtil.mensajeResponseExterno(response, NO_HAY_REGISTRO_SIAP, SERVICIO_SEPOMEX_NO_DISPONIBLE);
 	}
-
 
 }

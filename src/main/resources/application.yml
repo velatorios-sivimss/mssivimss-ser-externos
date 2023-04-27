@@ -53,7 +53,8 @@ endpoints:
    sepomex: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/domicilios/asentamientos/codigoPostal"
    renapo: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/renapo/curp"
    siap: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/siap/matricula"
-  
+   correo: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/util/correoElectronico/enviar"
+   
 jwt:
   login: funcionamuybienlogin
   secretkey-flujo: funcionamuybien
@@ -89,3 +90,6 @@ resilience4j.timelimiter:
     instances:
       msflujo:
         timeout-duration: 3s
+        
+correo:
+  remitente: "SIVIMSS <noreply.prestamos@imss.gob.mx>"

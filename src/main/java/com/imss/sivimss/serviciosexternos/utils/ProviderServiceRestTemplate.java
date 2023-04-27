@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
+import com.imss.sivimss.serviciosexternos.model.request.CorreoRequest;
 import com.imss.sivimss.serviciosexternos.security.jwt.JwtTokenProvider;
+
 
 @Service
 public class ProviderServiceRestTemplate {
@@ -124,4 +126,17 @@ public class ProviderServiceRestTemplate {
 	private String mensajeRespuesta(String e) {
 		return e.trim().equals("") ? AppConstantes.CIRCUITBREAKER : e.trim();
 	}
+	
+
+	public Response<Object> consumirServicioCorreo(CorreoRequest correoRequest, String url, Authentication authentication)
+			throws IOException {
+		try {
+			return restTemplateUtil.sendPostRequestCorreo(url, correoRequest, Response.class);
+
+		} catch (IOException exception) {
+			log.error("Ha ocurrido un error al enviar correo");
+			throw exception;
+		}
+	}
+
 }
