@@ -92,6 +92,6 @@ resilience4j.timelimiter:
         timeout-duration: ${msit_TIEMPO_DURACION}
         
 correo:
-  remitente: ${msit_TIEMPO_DURACION}
+  remitente: ${msit_REMITENTE}
 
 ruta-log: ${msit_RUTA_LOG}
