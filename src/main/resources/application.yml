@@ -91,6 +91,7 @@ resilience4j.timelimiter:
       msflujo:
         timeout-duration: ${msit_TIEMPO_DURACION}
         
+ruta-log: ${msit_REMITENTE}
+
 correo:
   remitente: ${msit_TIEMPO_DURACION}
-  ruta-log: ${msit_REMITENTE}
