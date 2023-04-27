@@ -270,7 +270,7 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<Object> sendPostRequestCorreo(String url, CorreoRequest correoRequest , Class<?> clazz)
+	public Response<Object> sendPostRequestCorreo(String url, String correo)
 			throws IOException {
 		Response<Object> responseBody = new Response<>();
 		HttpHeaders headers = new HttpHeaders();
@@ -280,7 +280,7 @@ public class RestTemplateUtil {
 		
 		try {
 
-			HttpEntity<String>entity= new HttpEntity<>(correoRequest.toStringToJson() ,headers);
+			HttpEntity<String>entity= new HttpEntity<>(correo ,headers);
 			responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class );
 			
 			if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT ) {

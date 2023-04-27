@@ -128,10 +128,10 @@ public class ProviderServiceRestTemplate {
 	}
 	
 
-	public Response<Object> consumirServicioCorreo(CorreoRequest correoRequest, String url, Authentication authentication)
+	public Response<Object> consumirServicioCorreo(String correo, String url)
 			throws IOException {
 		try {
-			return restTemplateUtil.sendPostRequestCorreo(url, correoRequest, Response.class);
+			return restTemplateUtil.sendPostRequestCorreo(url, correo);
 
 		} catch (IOException exception) {
 			log.error("Ha ocurrido un error al enviar correo");

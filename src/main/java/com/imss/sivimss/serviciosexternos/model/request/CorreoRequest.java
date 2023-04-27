@@ -23,8 +23,4 @@ public class CorreoRequest {
 	private String remitente;
 	private String cuerpoCorreo;
 
-
-	  public String toStringToJson() {
-	    return "{\"correoPara\": [\"" + correoPara+ "\"],\"asunto\": \"" + asunto+ "\",\"remitente\": \"" + remitente + "\", \"cuerpoCorreo\": \"" + cuerpoCorreo + "\"}";
-	  }
 }
