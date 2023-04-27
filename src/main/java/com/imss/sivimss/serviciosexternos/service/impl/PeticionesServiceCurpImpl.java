@@ -17,6 +17,9 @@ public class PeticionesServiceCurpImpl implements PeticionesService {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PeticionesServiceCurpImpl.class);
 	
+	private static final String CURP_NO_VALIDO = "34"; // CURP no valido.
+	private static final String SERVICIO_RENAPO_NO_DISPONIBLE = "184"; // El servicio de RENAPO no esta disponible.
+	
 	@Value("${endpoints.renapo}")
 	private String urlRenapo;
 
@@ -29,8 +32,8 @@ public class PeticionesServiceCurpImpl implements PeticionesService {
 	@Override
 	public Response<?> consultarServicioExterno(Object dato, Authentication authentication)
 			throws IOException {
-		Response<?> response = providerRestTemplate.consumirServicioExternoGet(urlRenapo + "/" + dato);
-		return MensajeResponseUtil.mensajeResponseExterno(response, "34", "184");
+		Response<?>response=providerRestTemplate.consumirServicioExternoGet(urlRenapo+"/"+dato);
+		return  MensajeResponseUtil.mensajeResponseExterno(response, CURP_NO_VALIDO, SERVICIO_RENAPO_NO_DISPONIBLE);
 	}
 
 }

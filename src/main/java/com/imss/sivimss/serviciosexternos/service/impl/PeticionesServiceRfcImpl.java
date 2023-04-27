@@ -18,6 +18,9 @@ public class PeticionesServiceRfcImpl implements PeticionesService {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PeticionesServiceRfcImpl.class);
 	
+	private static final String RFC_NO_VALIDO = "33"; // R.F.C. no valido.
+	private static final String SERVICIO_SAT_NO_DISPONIBLE = "182"; // El servicio de SAT no esta disponible.
+	
 	@Value("${endpoints.sat}")
 	private String urlSat;
 
@@ -30,9 +33,10 @@ public class PeticionesServiceRfcImpl implements PeticionesService {
 	@Override
 	public Response<?> consultarServicioExterno(Object dato, Authentication authentication)
 			throws IOException {
-		Response<?> response = providerRestTemplate.consumirServicioExternoGet(urlSat + "/" + dato);
-
-		return MensajeResponseUtil.mensajeResponseExterno(response, "33", "182");
+		Response<?>response=providerRestTemplate.consumirServicioExternoGet(urlSat+"/"+dato);
+		
+		return MensajeResponseUtil.mensajeResponseExterno(response, RFC_NO_VALIDO, SERVICIO_SAT_NO_DISPONIBLE);
 	}
+
 
 }
