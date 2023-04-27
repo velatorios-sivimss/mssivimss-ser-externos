@@ -56,8 +56,8 @@ endpoints:
    correo: ${msit_CORREO}
 
 jwt:
-  login: ${msit_CONNECTION_DB}
-  secretkey-flujo: ${msit_CONNECTION_DB}
+  login: ${msit_SECRET_KEY_LOGIN}
+  secretkey-flujo: ${msit_SECRET_KEY}
   expiration-milliseconds: ${msit_SECRET_KEY_EXPIRATION}
 
 management:
