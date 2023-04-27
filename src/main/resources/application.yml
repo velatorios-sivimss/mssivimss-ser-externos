@@ -15,8 +15,8 @@ spring:
     platform: mariadb
     driverClassName: org.mariadb.jdbc.Driver
     url: ${msit_CONNECTION_DB}
-    username: ${msit_CONNECTION_DB}
-    password: ${msit_CONNECTION_DB}
+    username: ${msit_USERNAME_DB}
+    password: ${msit_PASSWORD_DB}
     timeBetweenEvictionRunsMillis: 1000
     testWhileIdle: true
     validationQuery: SELECT 1
@@ -49,16 +49,16 @@ logging:
     org.hibernate: error
 
 endpoints:
-   sat: ${msit_CONNECTION_DB}
-   sepomex: ${msit_CONNECTION_DB}
-   renapo: ${msit_CONNECTION_DB}
-   siap: ${msit_CONNECTION_DB}
-   correo: ${msit_CONNECTION_DB}
+   sat: ${msit_SAT}
+   sepomex: ${msit_SEPOMEX}
+   renapo: ${msit_RENAPO}
+   siap: ${msit_SIAP}
+   correo: ${msit_CORREO}
 
 jwt:
   login: ${msit_CONNECTION_DB}
   secretkey-flujo: ${msit_CONNECTION_DB}
-  expiration-milliseconds: 360
+  expiration-milliseconds: ${msit_SECRET_KEY_EXPIRATION}
 
 management:
       endpoints:
