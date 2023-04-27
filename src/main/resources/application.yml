@@ -49,15 +49,15 @@ logging:
     org.hibernate: error
 
 endpoints:
-   sat: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/sat/rfc"
-   sepomex: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/domicilios/asentamientos/codigoPostal"
-   renapo: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/renapo/curp"
-   siap: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/siap/matricula"
-   correo: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/util/correoElectronico/enviar"
-   
+   sat: ${msit_CONNECTION_DB}
+   sepomex: ${msit_CONNECTION_DB}
+   renapo: ${msit_CONNECTION_DB}
+   siap: ${msit_CONNECTION_DB}
+   correo: ${msit_CONNECTION_DB}
+
 jwt:
-  login: funcionamuybienlogin
-  secretkey-flujo: funcionamuybien
+  login: ${msit_CONNECTION_DB}
+  secretkey-flujo: ${msit_CONNECTION_DB}
   expiration-milliseconds: 360
 
 management:
@@ -93,3 +93,4 @@ resilience4j.timelimiter:
         
 correo:
   remitente: ${msit_TIEMPO_DURACION}
+  ruta-log: ${msit_REMITENTE}
