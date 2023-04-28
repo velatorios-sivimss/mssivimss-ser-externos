@@ -38,21 +38,21 @@ public class PeticionesServiceCorreoImpl implements PeticionesCorreoService {
 	@Override
 	public Response<?> consultarServicioExternoCorreo(CorreoRequest correoRequest, Authentication authentication)
 			throws IOException {
-		getBodyMail(correoRequest);		
-		Response<Object> response = providerRestTemplate.consumirServicioCorreo(correoRequest, urlCorreo,
-				authentication);
+		String correo = getBodyMail(correoRequest);
+		Response<Object> response = providerRestTemplate.consumirServicioCorreo(correo, urlCorreo);
 		return MensajeResponseUtil.mensajeResponseExterno(response, ERROR_ENVIO_CORREO,
 				SERVICIO_CORREO_NO_DISPONIBLE);
 	}
 	
 	
-	private void getBodyMail(CorreoRequest correoRequest) {
+	private String getBodyMail(CorreoRequest correoRequest) {
 		Optional<CorreoResponse> correo = correoRepository.buscarCuerpoCorreo(correoRequest.getTipoCorreo());
-		correoRequest.setAsunto(correo.get().getAsunto());
-		String cuerpoCorreo = correo.get().getCuerpoCorreo().replaceAll("reemplazarNombre", correoRequest.getNombre());
-			   cuerpoCorreo = cuerpoCorreo.replaceAll("reemplazarCodigo", correoRequest.getCodigo());
-		correoRequest.setCuerpoCorreo(cuerpoCorreo);
-		correoRequest.setRemitente(remitente);
+		String cuerpoCorreo = correo.get().getCuerpoCorreo().replace("reemplazarNombre", correoRequest.getNombre());
+			   cuerpoCorreo = cuerpoCorreo.replace("reemplazarCodigo", correoRequest.getCodigo());
+		return "{\"correoPara\": [\"" + correoRequest.getCorreoPara()+ "\"],"
+				+ "\"asunto\": \"" + correo.get().getAsunto() + "\","
+				+ "\"remitente\": \"" + remitente + "\","
+				+ " \"cuerpoCorreo\": \"" + cuerpoCorreo + "\"}";
 	}
 
 }
