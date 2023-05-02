@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
+import com.imss.sivimss.serviciosexternos.model.request.CorreoRequest;
 
 @Component
 
@@ -262,4 +262,38 @@ public class RestTemplateUtil {
 		return header;
 	}
 
+	/**
+	 * Envia correo.
+	 *
+	 * @param url
+	 * @param CorreoRequest
+	 * @param clazz
+	 * @return
+	 */
+	public Response<Object> sendPostRequestCorreo(String url, String correo)
+			throws IOException {
+		Response<Object> responseBody = new Response<>();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+       
+		ResponseEntity<?> responseEntity = null;
+		
+		try {
+
+			HttpEntity<String>entity= new HttpEntity<>(correo ,headers);
+			responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class );
+			
+			if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT ) {
+				responseBody = new Response<>(false, HttpStatus.OK.value(), "Correo enviado correctamente", null);
+			} else {
+				throw new IOException("Ha ocurrido un error al enviar");
+			}
+		} catch (IOException ioException) {
+			throw ioException;
+		} catch (Exception e) {
+			throw e;
+		}
+
+		return responseBody;
+	}
 }
