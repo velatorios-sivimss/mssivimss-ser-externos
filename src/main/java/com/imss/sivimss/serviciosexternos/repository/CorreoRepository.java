@@ -13,9 +13,9 @@ import com.imss.sivimss.serviciosexternos.model.entity.VelatorioEntity;
 
 public interface CorreoRepository extends JpaRepository<CorreoEntity, Integer> {
 
-	@Query(value = "SELECT stc.ASUNTO AS asunto,stc.CUERPO_CORREO AS cuerpoCorreo "
-			+ " FROM svc_tipo_correo stc "
-			+ " WHERE stc.TIPO_CORREO = ?1 "
+	@Query(value = "SELECT STC.ASUNTO AS ASUNTO,STC.CUERPO_CORREO AS cuerpoCorreo "
+			+ " FROM SVC_TIPO_CORREO STC "
+			+ " WHERE STC.TIPO_CORREO = ?1 "
 			, nativeQuery = true)
 	Optional<CorreoResponse> buscarCuerpoCorreo(String tipoCorreo);
 
