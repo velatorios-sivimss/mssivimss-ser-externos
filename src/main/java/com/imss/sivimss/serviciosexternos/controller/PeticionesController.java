@@ -191,6 +191,7 @@ public class PeticionesController {
 			@RequestParam(required = true) String servicio, @PathVariable Integer idFuncionalidad,
 			Authentication authentication, CallNotPermittedException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -202,18 +203,21 @@ public class PeticionesController {
 	 */
 	private CompletableFuture<?> fallbackCatalogo(Authentication authentication, CallNotPermittedException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
 	private CompletableFuture<?> fallbackCatalogo(Authentication authentication, NumberFormatException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
 	private CompletableFuture<?> fallbackCatalogo(Authentication authentication, RuntimeException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -226,6 +230,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
 			Authentication authentication, CallNotPermittedException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -233,6 +238,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
 			Authentication authentication, RuntimeException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -240,6 +246,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
 			Authentication authentication, NumberFormatException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -251,18 +258,21 @@ public class PeticionesController {
 	 */
 	private CompletableFuture<?> fallbackCatalogoNivel(Authentication authentication, CallNotPermittedException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
 	private CompletableFuture<?> fallbackCatalogoNivel(Authentication authentication, RuntimeException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
 	private CompletableFuture<?> fallbackCatalogoNivel(Authentication authentication, NumberFormatException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -275,6 +285,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackGenerico(@PathVariable String dato, Authentication authentication,
 			CallNotPermittedException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -282,6 +293,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackGenerico(@PathVariable String dato, Authentication authentication,
 			RuntimeException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -289,6 +301,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackGenerico(@PathVariable String dato, Authentication authentication,
 			NumberFormatException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -302,6 +315,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
 			CallNotPermittedException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -309,6 +323,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
 			RuntimeException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -316,6 +331,7 @@ public class PeticionesController {
 	private CompletableFuture<?> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
 			NumberFormatException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		// logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + request.getDatos().toString(),authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
