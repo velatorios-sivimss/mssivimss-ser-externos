@@ -19,16 +19,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.imss.sivimss.serviciosexternos.model.request.CorreoRequest;
+
 
 @Component
-
 public class RestTemplateUtil {
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestTemplateUtil.class);
 	
 	private final RestTemplate restTemplate;
 
+	private static final String ERROR_ENVIAR = "Ha ocurrido un error al enviar";
 	public RestTemplateUtil(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}
@@ -40,9 +39,9 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<?> sendPostRequestByteArray(String url, EnviarDatosRequest body, Class<?> clazz)
+	public Response<Object> sendPostRequestByteArray(String url, EnviarDatosRequest body, Class<?> clazz)
 			throws IOException {
-		Response<?> responseBody = new Response<>();
+		Response<Object> responseBody = new Response<>();
 		HttpHeaders headers = RestTemplateUtil.createHttpHeaders();
 
 		HttpEntity<Object> request = new HttpEntity<>(body, headers);
@@ -51,18 +50,13 @@ public class RestTemplateUtil {
 			responseEntity = restTemplate.postForEntity(url, request, clazz);
 			if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
 				// noinspection unchecked
-				responseBody = (Response<List<String>>) responseEntity.getBody();
+				responseBody = (Response<Object>) responseEntity.getBody();
 			} else {
-				throw new IOException("Ha ocurrido un error al enviar");
+				throw new IOException(ERROR_ENVIAR);
 			}
 		} catch (IOException ioException) {
 			throw ioException;
 		} catch (Exception e) {
-			/*
-			 * log.error("Fallo al consumir el servicio, {}", e.getMessage());
-			 * responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			 * responseBody.setError(true); responseBody.setMensaje(e.getMessage());
-			 */
 			throw e;
 		}
 
@@ -76,33 +70,26 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<?> sendPostRequestByteArrayToken(String url, EnviarDatosRequest body, String subject,
-			Class<?> clazz) throws IOException {
-		Response<?> responseBody = new Response<>();
+	public Response<Object> sendPostRequestByteArrayToken(String url, EnviarDatosRequest body, String subject,
+			Class<?> clazz) {
+		Response<Object> responseBody = new Response<>();
 		HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
 
 		HttpEntity<Object> request = new HttpEntity<>(body, headers);
 		ResponseEntity<?> responseEntity = null;
-		// try {
-		responseEntity = restTemplate.postForEntity(url, request, clazz);
-		/*
-		 * if (responseEntity.getStatusCode() == HttpStatus.OK &&
-		 * responseEntity.getBody() != null) {
-		 */
-		// noinspection unchecked
-		responseBody = (Response<List<String>>) responseEntity.getBody();
-		/*
-		 * } else { throw new IOException("Ha ocurrido un error al enviar"); } } catch
-		 * (IOException ioException) { throw ioException; } catch (Exception e) { throw
-		 * e;
-		 * 
-		 * }
-		 */
+		try {
+			responseEntity = restTemplate.postForEntity(url, request, clazz);
+			responseBody = (Response<Object>) responseEntity.getBody();
 
-		return responseBody;
+		} catch (Exception e) {
+			responseBody.setError(true);
+			responseBody.setMensaje(e.getMessage());
+			throw e;
+		}
+		return  responseBody;
 	}
 
-	public Response<?> sendPostRequestByteArray(String url, RecuperarStreamRequest body, Class<?> clazz)
+	public Response<Object> sendPostRequestByteArray(String url, RecuperarStreamRequest body, Class<?> clazz)
 			throws IOException {
 		Response<?> responseBody = new Response<>();
 		HttpHeaders headers = RestTemplateUtil.createHttpHeaders();
@@ -123,7 +110,7 @@ public class RestTemplateUtil {
 			throw e;
 		}
 
-		return responseBody;
+		return (Response<Object>) responseBody;
 	}
 
 	/**
@@ -133,7 +120,7 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<Object> sendGetRequest(String url) throws IOException {
+	public Response<Object> sendGetRequest(String url) {
 		Response<Object> response = new Response<>();
 		ResponseEntity<?> responseEntity = null;
 		try {
@@ -176,7 +163,7 @@ public class RestTemplateUtil {
 	}
 
 	/**
-	 * Crea los headers para la petici&oacute;n todo - falta agregar el tema de
+	 * Crea los headers para la petici&oacute;n  - falta agregar el tema de
 	 * seguridad para las peticiones
 	 *
 	 * @return
@@ -189,7 +176,7 @@ public class RestTemplateUtil {
 	}
 
 	/**
-	 * Crea los headers para la petici&oacute;n con token todo - falta agregar el
+	 * Crea los headers para la petici&oacute;n con token  - falta agregar el
 	 * tema de seguridad para las peticiones
 	 *
 	 * @return
@@ -205,7 +192,7 @@ public class RestTemplateUtil {
 
 	///////////////////////////////////////////////////// peticion con archivos
 	/**
-	 * Crea los headers para la petici&oacute;n con token todo - falta agregar el
+	 * Crea los headers para la petici&oacute;n con token  - falta agregar el
 	 * tema de seguridad para las peticiones
 	 *
 	 * @return
@@ -217,7 +204,7 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<?> sendPostRequestByteArrayArchviosToken(String url, EnviarDatosArchivosRequest body,
+	public Response<Object> sendPostRequestByteArrayArchviosToken(String url, EnviarDatosArchivosRequest body,
 			String subject, Class<?> clazz) throws IOException {
 		Response<?> responseBody = new Response<>();
 		HttpHeaders headers = RestTemplateUtil.createHttpHeadersArchivosToken(subject);
@@ -242,7 +229,7 @@ public class RestTemplateUtil {
 				// noinspection unchecked
 				responseBody = (Response<List<String>>) responseEntity.getBody();
 			} else {
-				throw new IOException("Ha ocurrido un error al enviar");
+				throw new IOException(ERROR_ENVIAR);
 			}
 		} catch (IOException ioException) {
 			throw ioException;
@@ -250,7 +237,7 @@ public class RestTemplateUtil {
 			throw e;
 		}
 
-		return responseBody;
+		return (Response<Object>) responseBody;
 	}
 
 	private static HttpHeaders createHttpHeadersArchivosToken(String subject) {
@@ -286,7 +273,7 @@ public class RestTemplateUtil {
 			if (responseEntity.getStatusCode() == HttpStatus.NO_CONTENT ) {
 				responseBody = new Response<>(false, HttpStatus.OK.value(), "Correo enviado correctamente", null);
 			} else {
-				throw new IOException("Ha ocurrido un error al enviar");
+				throw new IOException(ERROR_ENVIAR);
 			}
 		} catch (IOException ioException) {
 			throw ioException;

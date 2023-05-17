@@ -15,7 +15,6 @@ import com.imss.sivimss.serviciosexternos.utils.Response;
 @Service
 public class PeticionesServiceCodigoPostalImpl implements PeticionesService {
 	
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PeticionesServiceCodigoPostalImpl.class);
 
 	private static final String CODIGO_POSTAL_NO_EXISTE = "185"; // El codigo postal no existe.
 	private static final String SERVICIO_SEPOMEX_NO_DISPONIBLE = "181"; // El servicio de SEPOMEX no esta disponible.
@@ -33,9 +32,9 @@ public class PeticionesServiceCodigoPostalImpl implements PeticionesService {
 
 
 	@Override
-	public Response<?> consultarServicioExterno(Object dato, Authentication authentication)
+	public Response<Object> consultarServicioExterno(Object dato, Authentication authentication)
 			throws IOException {
-		Response<?>response=providerRestTemplate.consumirServicioExternoGet(urlSepomex+"/"+dato);
+		Response<Object>response=providerRestTemplate.consumirServicioExternoGet(urlSepomex+"/"+dato);
 		return MensajeResponseUtil.mensajeResponseExterno(response, CODIGO_POSTAL_NO_EXISTE, SERVICIO_SEPOMEX_NO_DISPONIBLE	);
 	}
 

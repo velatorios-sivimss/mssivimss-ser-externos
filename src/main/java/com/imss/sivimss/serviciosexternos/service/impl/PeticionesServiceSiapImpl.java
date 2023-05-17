@@ -29,9 +29,9 @@ public class PeticionesServiceSiapImpl implements PeticionesService{
 
 
 	@Override
-	public Response<?> consultarServicioExterno(Object dato, Authentication authentication)
+	public Response<Object> consultarServicioExterno(Object dato, Authentication authentication)
 			throws IOException {
-		Response<?>response=providerRestTemplate.consumirServicioExternoGet(urlSiap+"/"+dato);
+		Response<Object>response=providerRestTemplate.consumirServicioExternoGet(urlSiap+"/"+dato);
 		return MensajeResponseUtil.mensajeResponseExterno(response, NO_HAY_REGISTRO_SIAP, SERVICIO_SEPOMEX_NO_DISPONIBLE);
 	}
 
