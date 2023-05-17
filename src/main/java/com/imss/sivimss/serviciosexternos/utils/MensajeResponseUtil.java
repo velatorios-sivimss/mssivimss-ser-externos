@@ -1,17 +1,13 @@
 package com.imss.sivimss.serviciosexternos.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class MensajeResponseUtil {
 
-	private static final Logger log = LoggerFactory.getLogger(MensajeResponseUtil.class);
 
 	private MensajeResponseUtil() {
 		super();
 	}
 
-	public static Response<?> mensajeResponseExterno(Response<?> respuestaGenerado, String numeroMensaje,
+	public static Response<Object> mensajeResponseExterno(Response<Object> respuestaGenerado, String numeroMensaje,
 			String numeroMensajeError) {
 		Integer codigo = respuestaGenerado.getCodigo();
 		if (codigo == 400) {

@@ -7,5 +7,5 @@ import com.imss.sivimss.serviciosexternos.utils.Response;
 
 public interface PeticionesService {
 
-	Response<?> consultarServicioExterno(Object dato, Authentication authentication) throws IOException;
+	Response<Object> consultarServicioExterno(Object dato, Authentication authentication) throws IOException;
 }

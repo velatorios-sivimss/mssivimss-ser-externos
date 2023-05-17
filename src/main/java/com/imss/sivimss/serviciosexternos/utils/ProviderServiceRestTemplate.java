@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
-import com.imss.sivimss.serviciosexternos.model.request.CorreoRequest;
 import com.imss.sivimss.serviciosexternos.security.jwt.JwtTokenProvider;
 
 
@@ -29,45 +28,32 @@ public class ProviderServiceRestTemplate {
 
 	private static final Logger log = LoggerFactory.getLogger(ProviderServiceRestTemplate.class);
 
-	public Response<?> consumirServicio(Map<String, Object> dato, String url, Authentication authentication)
-			throws IOException {
-		try {
-			Response respuestaGenerado = restTemplateUtil.sendPostRequestByteArrayToken(url,
-					new EnviarDatosRequest(dato), jwtTokenProvider.createToken((String) authentication.getPrincipal()),
-					Response.class);
-
-			return respuestaGenerado;
-		} catch (IOException exception) {
-			log.error("Ha ocurrido un error al recuperar la informacion");
-			throw exception;
-		}
+	private static final String ERROR_RECUPERAR_INFORMACION = "Ha ocurrido un error al recuperar la informacion";
+	
+	public Response<Object> consumirServicio(Map<String, Object> dato, String url, Authentication authentication) {
+		return restTemplateUtil.sendPostRequestByteArrayToken(url,
+				new EnviarDatosRequest(dato), jwtTokenProvider.createToken((String) authentication.getPrincipal()),
+				Response.class);
 	}
 
-	public Response<?> consumirServicioArchivo(String datos, MultipartFile[] files, String url,
+	public Response<Object> consumirServicioArchivo(String datos, MultipartFile[] files, String url,
 			Authentication authentication) throws IOException {
 		try {
-			Response respuestaGenerado = restTemplateUtil.sendPostRequestByteArrayArchviosToken(url,
+			return restTemplateUtil.sendPostRequestByteArrayArchviosToken(url,
 					new EnviarDatosArchivosRequest(datos, files),
 					jwtTokenProvider.createToken((String) authentication.getPrincipal()), Response.class);
 
-			return respuestaGenerado;
 		} catch (IOException exception) {
-			log.error("Ha ocurrido un error al recuperar la informacion");
+			log.error(ERROR_RECUPERAR_INFORMACION);
 			throw exception;
 		}
 	}
 
-	public Response<Object> consumirServicioExternoGet(String url)
-			throws IOException {
-		try {
-			return restTemplateUtil.sendGetRequest(url);
-		} catch (IOException exception) {
-			log.error("Ha ocurrido un error al recuperar la informacion");
-			throw exception;
-		}
+	public Response<Object> consumirServicioExternoGet(String url) {
+		return restTemplateUtil.sendGetRequest(url);
 	}
 
-	public Response<?> respuestaProvider(String e) {
+	public Response<Object> respuestaProvider(String e) {
 		StringTokenizer exeception = new StringTokenizer(e, ":");
 		Gson gson = new Gson();
 		int i = 0;
@@ -79,24 +65,10 @@ public class ProviderServiceRestTemplate {
 			String str = exeception.nextToken();
 			i++;
 			if (i == 2) {
-				String[] palabras = str.split("\\.");
-				for (String palabra : palabras) {
-					if ("BadRequestException".contains(palabra)) {
-						codigoError = HttpStatus.BAD_REQUEST.value();
-					} else if ("ResourceAccessException".contains(palabra)) {
-						codigoError = HttpStatus.INTERNAL_SERVER_ERROR.value();
-
-					}
-				}
+				codigoError = getError(str);				
 			} else if (i == 3) {
-
-				if (str.trim().chars().allMatch(Character::isDigit)) {
-					isExceptionResponseMs = 1;
-				}
-
-				mensaje.append(codigoError == HttpStatus.INTERNAL_SERVER_ERROR.value()
-						? AppConstantes.CIRCUITBREAKER
-						: str);
+				isExceptionResponseMs = esNumero(str);
+				mensaje.append(getCodigoError(codigoError, str));
 
 			} else if (i >= 4 && isExceptionResponseMs == 1) {
 				if (i == 4) {
@@ -107,7 +79,7 @@ public class ProviderServiceRestTemplate {
 			}
 		}
 
-		Response response;
+		Response<Object> response;
 		try {
 			response = isExceptionResponseMs == 1 && !mensaje.toString().trim().equals("")
 					? gson.fromJson(mensaje.substring(2, mensaje.length() - 1), Response.class)
@@ -137,6 +109,29 @@ public class ProviderServiceRestTemplate {
 			log.error("Ha ocurrido un error al enviar correo");
 			throw exception;
 		}
+	}
+	private int getError(String str) {
+		int returnVal = HttpStatus.INTERNAL_SERVER_ERROR.value();
+		String[] palabras = str.split("\\.");
+		for (String palabra : palabras) {
+			if ("BadRequestException".contains(palabra)) {
+				returnVal = HttpStatus.BAD_REQUEST.value();
+			} else if ("ResourceAccessException".contains(palabra)) {
+				returnVal = HttpStatus.INTERNAL_SERVER_ERROR.value();
+
+			}
+		}
+		return returnVal;
+	}
+	
+	private int esNumero (String str) {
+		if(str.trim().chars().allMatch(Character::isDigit))
+			return 1;
+		else 
+			return 0;
+	}
+	private String getCodigoError (int codigoError, String str) {
+		return (codigoError == HttpStatus.INTERNAL_SERVER_ERROR.value()? AppConstantes.CIRCUITBREAKER : str);
 	}
 
 }

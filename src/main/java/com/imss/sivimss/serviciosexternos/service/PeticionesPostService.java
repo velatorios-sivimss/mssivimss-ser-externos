@@ -10,6 +10,6 @@ import com.imss.sivimss.serviciosexternos.utils.Response;
 
 public interface PeticionesPostService {
 
-	Response<?> consultarServicioExterno(DatosRequest dato, Authentication authentication) throws IOException;
-	Response<?> consultarServicioExterno(CorreoRequest dato, Authentication authentication) throws IOException;
+	Response<Object> consultarServicioExterno(DatosRequest dato, Authentication authentication) throws IOException;
+	Response<Object> consultarServicioExterno(CorreoRequest dato, Authentication authentication) throws IOException;
 }
