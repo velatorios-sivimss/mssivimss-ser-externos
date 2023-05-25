@@ -2,6 +2,7 @@ package com.imss.sivimss.serviciosexternos.controller;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +22,7 @@ import com.imss.sivimss.serviciosexternos.service.CatalogosService;
 import com.imss.sivimss.serviciosexternos.service.PeticionesCorreoService;
 import com.imss.sivimss.serviciosexternos.service.PeticionesService;
 import com.imss.sivimss.serviciosexternos.utils.AppConstantes;
+import com.imss.sivimss.serviciosexternos.utils.LogUtil;
 import com.imss.sivimss.serviciosexternos.utils.ProviderServiceRestTemplate;
 import com.imss.sivimss.serviciosexternos.utils.Response;
 
@@ -34,7 +36,6 @@ import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 @RequestMapping("/catalogos/externos") 
 public class PeticionesController {
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PeticionesController.class);
 	@Autowired
 	@Qualifier("peticionesServiceRfcImpl")
 	private PeticionesService peticionesServiceRfc;
@@ -63,13 +64,21 @@ public class PeticionesController {
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
 
+	@Autowired
+	private LogUtil logUtil;
+	private static final String CONSULTA = "consulta";
+	private static final String ENVIO_CORREO = "envio correo";
+	private static final String CATALOGO_DELEGACION = " CatalogoDelegacion ";
+	private static final String CATALOGO_NIVEL = " CatalogoNivel ";
+	
+	
 	@GetMapping("/consultar/rfc/{dato}")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> obtenerRfc(@PathVariable String dato, Authentication authentication)
 			throws IOException {
-		Response<?> response = peticionesServiceRfc.consultarServicioExterno(dato, authentication);
+		Response<Object> response = peticionesServiceRfc.consultarServicioExterno(dato, authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));
 	}
@@ -80,7 +89,7 @@ public class PeticionesController {
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> obtenerCurp(@PathVariable String dato, Authentication authentication)
 			throws IOException {
-		Response<?> response = peticionesServiceCurp.consultarServicioExterno(dato, authentication);
+		Response<Object> response = peticionesServiceCurp.consultarServicioExterno(dato, authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));
 	}
@@ -91,7 +100,7 @@ public class PeticionesController {
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> obtenerCodigoPostal(@PathVariable String dato, Authentication authentication)
 			throws IOException {
-		Response<?> response = peticionesServiceCodigoPostal.consultarServicioExterno(dato, authentication);
+		Response<Object> response = peticionesServiceCodigoPostal.consultarServicioExterno(dato, authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));
 	}
@@ -102,8 +111,8 @@ public class PeticionesController {
 	 * @return
 	 */
 	@GetMapping("/consultar/delegaciones")
-	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackCatalogo")
-	@Retry(name = "msflujo", fallbackMethod = "fallbackCatalogo")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackCatalogoDelegacion")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackCatalogoDelegacion")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> obtenerDelegacion(Authentication authentication) throws IOException {
 
@@ -152,7 +161,7 @@ public class PeticionesController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object>obtenerSiap(@PathVariable String dato,Authentication authentication) throws IOException{
-		Response<?> response= peticionesServiceSiap.consultarServicioExterno(dato, authentication);		
+		Response<Object> response= peticionesServiceSiap.consultarServicioExterno(dato, authentication);		
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));
 	}
@@ -163,7 +172,7 @@ public class PeticionesController {
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> enviarCorreo(@RequestBody CorreoRequest request,Authentication authentication) throws IOException {
 
-		Response<?> response = peticionesServiceCorreo.consultarServicioExternoCorreo(request, authentication);		
+		Response<Object> response = peticionesServiceCorreo.envioCorreoConToken(request, authentication);		
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));	
 	}
 	
@@ -174,23 +183,30 @@ public class PeticionesController {
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> enviarCorreoContrasenia(@RequestBody CorreoRequest request,Authentication authentication) throws IOException {
 
-		Response<?> response = peticionesServiceCorreo.consultarServicioExternoCorreo(request, authentication);		
+		Response<Object> response = peticionesServiceCorreo.envioCorreoSinToken(request);		
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));	
 	}
+	
+	
+	
+	
 	
 	/**
 	 * 
 	 * fallbacks consulta
 	 * 
 	 * @return respuestas
+	 * @throws IOException 
 	 */
 
+	@SuppressWarnings("unused")
 	private CompletableFuture<Object> fallbackconsultaPaginada(
 			@RequestParam(defaultValue = AppConstantes.NUMERO_DE_PAGINA) Integer pagina,
 			@RequestParam(defaultValue = AppConstantes.TAMANIO_PAGINA) Integer tamanio,
 			@RequestParam(required = true) String servicio, @PathVariable Integer idFuncionalidad,
-			Authentication authentication, CallNotPermittedException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+			Authentication authentication, CallNotPermittedException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		 logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + idFuncionalidad,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -199,21 +215,28 @@ public class PeticionesController {
 	 * fallbacks catalogo delegacion
 	 * 
 	 * @return respuestas
+	 * @throws IOException 
 	 */
-	private CompletableFuture<?> fallbackCatalogo(Authentication authentication, CallNotPermittedException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoDelegacion(Authentication authentication, CallNotPermittedException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		 logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + CATALOGO_DELEGACION,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackCatalogo(Authentication authentication, NumberFormatException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoDelegacion(Authentication authentication, NumberFormatException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + CATALOGO_DELEGACION,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackCatalogo(Authentication authentication, RuntimeException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoDelegacion(Authentication authentication, RuntimeException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + CATALOGO_DELEGACION,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -222,24 +245,31 @@ public class PeticionesController {
 	 * fallbacks catalogo velacion
 	 * 
 	 * @return respuestas
+	 * @throws IOException 
 	 */
-	private CompletableFuture<?> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
-			Authentication authentication, CallNotPermittedException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
+			Authentication authentication, CallNotPermittedException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + idDelegacion,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
-			Authentication authentication, RuntimeException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
+			Authentication authentication, RuntimeException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		 logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + idDelegacion,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
-			Authentication authentication, NumberFormatException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoVelacion(@PathVariable Integer idDelegacion,
+			Authentication authentication, NumberFormatException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		 logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + idDelegacion,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -248,21 +278,28 @@ public class PeticionesController {
 	 * fallbacks catalogo nivel
 	 * 
 	 * @return respuestas
+	 * @throws IOException 
 	 */
-	private CompletableFuture<?> fallbackCatalogoNivel(Authentication authentication, CallNotPermittedException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoNivel(Authentication authentication, CallNotPermittedException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + CATALOGO_NIVEL ,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackCatalogoNivel(Authentication authentication, RuntimeException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoNivel(Authentication authentication, RuntimeException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + CATALOGO_NIVEL,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackCatalogoNivel(Authentication authentication, NumberFormatException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCatalogoNivel(Authentication authentication, NumberFormatException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + CATALOGO_NIVEL ,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -271,24 +308,31 @@ public class PeticionesController {
 	 * fallbacks catalogo nivel
 	 * 
 	 * @return respuestas
+	 * @throws IOException 
 	 */
-	private CompletableFuture<?> fallbackGenerico(@PathVariable String dato, Authentication authentication,
-			CallNotPermittedException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackGenerico(@PathVariable String dato, Authentication authentication,
+			CallNotPermittedException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + dato,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackGenerico(@PathVariable String dato, Authentication authentication,
-			RuntimeException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackGenerico(@PathVariable String dato, Authentication authentication,
+			RuntimeException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + dato,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackGenerico(@PathVariable String dato, Authentication authentication,
-			NumberFormatException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackGenerico(@PathVariable String dato, Authentication authentication,
+			NumberFormatException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),CONSULTA + " " + dato,authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -298,24 +342,31 @@ public class PeticionesController {
 	 * fallbacks correo
 	 * 
 	 * @return respuestas
+	 * @throws IOException 
 	 */
-	private CompletableFuture<?> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
-			CallNotPermittedException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
+			CallNotPermittedException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),ENVIO_CORREO + " " + request.toString(),authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
-			RuntimeException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
+			RuntimeException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),ENVIO_CORREO + " " + request.toString(),authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
-			NumberFormatException e) {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+	@SuppressWarnings("unused")
+	private CompletableFuture<Object> fallbackCorreo(@RequestBody CorreoRequest request, Authentication authentication,
+			NumberFormatException e) throws IOException {
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),e.getMessage(),ENVIO_CORREO + " " + request.toString(),authentication, null);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}

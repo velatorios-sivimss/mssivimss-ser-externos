@@ -6,11 +6,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 @JsonPropertyOrder({ "error", "codigo", "mensaje", "datos" })
 public class ErrorsMessageResponse {
 
@@ -32,38 +36,6 @@ public class ErrorsMessageResponse {
 		this.mensaje = mensaje;
 		this.datos = detalles;
 
-	}
-
-	public void setError(boolean error) {
-		this.error = error;
-	}
-
-	public long getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(long codigo) {
-		this.codigo = codigo;
-	}
-
-	public boolean isError() {
-		return error;
-	}
-
-	public String getMensaje() {
-		return mensaje;
-	}
-
-	public void setMensaje(String mensaje) {
-		this.mensaje = mensaje;
-	}
-
-	public String getDatos() {
-		return datos;
-	}
-
-	public void setDatos(String datos) {
-		this.datos = datos;
 	}
 
 }

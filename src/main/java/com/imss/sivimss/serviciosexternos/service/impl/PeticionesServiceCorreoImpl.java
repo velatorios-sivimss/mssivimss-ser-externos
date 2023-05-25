@@ -36,7 +36,16 @@ public class PeticionesServiceCorreoImpl implements PeticionesCorreoService {
 	private CorreoRepository correoRepository;
 
 	@Override
-	public Response<?> consultarServicioExternoCorreo(CorreoRequest correoRequest, Authentication authentication)
+	public Response<Object> envioCorreoConToken(CorreoRequest correoRequest, Authentication authentication)
+			throws IOException {
+		String correo = getBodyMail(correoRequest);
+		Response<Object> response = providerRestTemplate.consumirServicioCorreo(correo, urlCorreo);
+		return MensajeResponseUtil.mensajeResponseExterno(response, ERROR_ENVIO_CORREO,
+				SERVICIO_CORREO_NO_DISPONIBLE);
+	}
+
+	@Override
+	public Response<Object> envioCorreoSinToken(CorreoRequest correoRequest)
 			throws IOException {
 		String correo = getBodyMail(correoRequest);
 		Response<Object> response = providerRestTemplate.consumirServicioCorreo(correo, urlCorreo);
@@ -44,13 +53,17 @@ public class PeticionesServiceCorreoImpl implements PeticionesCorreoService {
 				SERVICIO_CORREO_NO_DISPONIBLE);
 	}
 	
-	
 	private String getBodyMail(CorreoRequest correoRequest) {
 		Optional<CorreoResponse> correo = correoRepository.buscarCuerpoCorreo(correoRequest.getTipoCorreo());
-		String cuerpoCorreo = correo.get().getCuerpoCorreo().replace("reemplazarNombre", correoRequest.getNombre());
-			   cuerpoCorreo = cuerpoCorreo.replace("reemplazarCodigo", correoRequest.getCodigo());
+		String cuerpoCorreo = "";
+		String asunto = "";
+		if(correo.isPresent()) {
+			asunto = correo.get().getAsunto();
+			cuerpoCorreo = correo.get().getCuerpoCorreo().replace("reemplazarNombre", correoRequest.getNombre());
+			cuerpoCorreo = cuerpoCorreo.replace("reemplazarCodigo", correoRequest.getCodigo());
+		}
 		return "{\"correoPara\": [\"" + correoRequest.getCorreoPara()+ "\"],"
-				+ "\"asunto\": \"" + correo.get().getAsunto() + "\","
+				+ "\"asunto\": \"" + asunto + "\","
 				+ "\"remitente\": \"" + remitente + "\","
 				+ " \"cuerpoCorreo\": \"" + cuerpoCorreo + "\"}";
 	}
