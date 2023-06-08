@@ -2,8 +2,10 @@
 server:
   port: 8080
   servlet:
-    contextPath: /mssivimss-ser-externos/v1/
+    contextPath: /${spring.application.name}/v1/
 spring:
+  application:
+    name: mssivimss-ser-externos 
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
