@@ -61,7 +61,7 @@ endpoints:
    renapo: ${msit_RENAPO}
    siap: ${msit_SIAP}
    correo: ${msit_CORREO}
-   nss: "http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/personas/asegurado"
+   nss: ${msit_NSS}
  
 
 jwt:
