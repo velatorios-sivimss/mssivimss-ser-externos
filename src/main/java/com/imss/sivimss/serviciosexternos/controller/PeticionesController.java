@@ -57,6 +57,10 @@ public class PeticionesController {
 	@Qualifier("peticionesServiceCorreoImpl")
 	private PeticionesCorreoService peticionesServiceCorreo;
 	
+	@Autowired
+	@Qualifier("peticionesServiceNSSImpl")
+	private PeticionesService peticionesServiceNSS;
+	
 	
 	@Autowired
 	private CatalogosService catalogoService;
@@ -164,6 +168,17 @@ public class PeticionesController {
 		Response<Object> response= peticionesServiceSiap.consultarServicioExterno(dato, authentication);		
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));
+	}
+
+	@GetMapping("/consultar/nss/{dato}")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object> obtenerNSS(@PathVariable String dato, Authentication authentication) throws IOException {
+
+		Response<Object> response = peticionesServiceNSS.consultarServicioExterno(dato, authentication);		
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));	
 	}
 	
 	@PostMapping("/enviar/correo")
