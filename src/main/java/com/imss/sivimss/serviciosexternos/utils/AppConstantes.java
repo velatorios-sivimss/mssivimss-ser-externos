@@ -6,6 +6,7 @@ public class AppConstantes {
 	public static final String ORDER_BY = "id";
 	public static final String ORDER_DIRECTION = "asc";
 	public static final String DATOS = "datos";
+	public static final String QUERY= "query";
 
 	public static final String FUNCIONALIDAD = "idFuncionalidad";
 	public static final String SERVICIO = "servicio";
