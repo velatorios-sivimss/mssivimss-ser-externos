@@ -21,10 +21,10 @@ public class CorreoEntity {
 	@Column(name = "ID_TIPO_CORREO")
 	private String idTipoCorreo;
 	
-	@Column(name = "ASUNTO")
+	@Column(name = "REF_ASUNTO")
 	private String asunto;
 
-	@Column(name = "CUERPO_CORREO")
+	@Column(name = "REF_CUERPO_CORREO")
 	private String cuerpoCorreo;
 
 }

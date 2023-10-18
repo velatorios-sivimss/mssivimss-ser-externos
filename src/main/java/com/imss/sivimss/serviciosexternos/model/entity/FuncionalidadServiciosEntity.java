@@ -26,7 +26,7 @@ public class FuncionalidadServiciosEntity {
 	@Column(name = "ID_SERVICIO")
 	private Integer idServicio;
 
-	@Column(name = "NOM_SERVICIO")
+	@Column(name = "DES_SERVICIO")
 	private String nombre;
 
 	@JsonBackReference

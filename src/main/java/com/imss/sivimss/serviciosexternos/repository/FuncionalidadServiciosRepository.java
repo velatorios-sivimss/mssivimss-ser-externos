@@ -20,7 +20,7 @@ public interface FuncionalidadServiciosRepository extends JpaRepository<Funciona
 			+ "INNER join SVC_PERMISO sp on sp.ID_PERMISO = srfp .ID_PERMISO    "
 			+ "INNER  join SVC_FUNCIONALIDAD svsf on svsf .ID_FUNCIONALIDAD = srfp .ID_FUNCIONALIDAD    "
 			+ "INNER join SVC_FUNCIONALIDAD_SERVICIO svs on svs.ID_FUNCIONALIDAD = srfp .ID_FUNCIONALIDAD AND svs.ID_PERMISO = srfp .ID_PERMISO    "
-			+ "where srfp .ID_ROL = :idRol and srfp .ID_FUNCIONALIDAD = :idFuncionalidad and srfp.CVE_ESTATUS = '1' and svs.NOM_SERVICIO = :servicio  ", nativeQuery = true)
+			+ "where srfp .ID_ROL = :idRol and srfp .ID_FUNCIONALIDAD = :idFuncionalidad and srfp.IND_ACTIVO = '1' and svs.DES_SERVICIO = :servicio  ", nativeQuery = true)
 	Optional<FuncionalidadServiciosEntity> buscarServicio(@Param("idRol") Integer idRol,
 			@Param("idFuncionalidad") Integer idFuncionalidad, @Param("servicio") String servicio);
 

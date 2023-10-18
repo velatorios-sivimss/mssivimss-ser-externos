@@ -28,7 +28,7 @@ public class RolFuncionalidadPermisoEntity {
 	@Column(name = "ID_PERMISO")
 	private Integer permisos;
 
-	@Column(name = "CVE_ESTATUS")
+	@Column(name = "IND_ACTIVO")
 	private Integer estatus;
 
 }
