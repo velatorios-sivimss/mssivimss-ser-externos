@@ -11,4 +11,5 @@ public interface PeticionesCorreoService {
 
 	Response<Object> envioCorreoConToken(CorreoRequest dato, Authentication authentication) throws IOException;
 	Response<Object> envioCorreoSinToken(CorreoRequest dato) throws IOException;
+	Response<Object> envioCorreoArchivoAdjunto(CorreoRequest dato) throws IOException;
 }

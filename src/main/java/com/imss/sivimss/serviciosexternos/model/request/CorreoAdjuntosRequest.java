@@ -15,15 +15,9 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonIgnoreType(value = true)
-public class CorreoRequest {
+public class CorreoAdjuntosRequest {
 
-	private String correoPara;
-	private String tipoCorreo;
-	private String nombre;
-	private String codigo;
-	private String asunto;
-	private String remitente;
-	private String cuerpoCorreo;
-	
-	private ArrayList<CorreoAdjuntosRequest> adjuntos;
+	private ArrayList<Object> adjuntos;
+	private String nombreAdjunto;
+	private String adjuntoBase64;
 }
