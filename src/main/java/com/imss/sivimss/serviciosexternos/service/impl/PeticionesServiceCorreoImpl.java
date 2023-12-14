@@ -68,4 +68,40 @@ public class PeticionesServiceCorreoImpl implements PeticionesCorreoService {
 				+ " \"cuerpoCorreo\": \"" + cuerpoCorreo + "\"}";
 	}
 
+	@Override
+	public Response<Object> envioCorreoArchivoAdjunto(CorreoRequest correoRequest)
+			throws IOException {
+		String correo = getBodyMailArchivoAdjunto(correoRequest);
+		Response<Object> response = providerRestTemplate.consumirServicioCorreo(correo, urlCorreo + "/");
+		return MensajeResponseUtil.mensajeResponseExterno(response, ERROR_ENVIO_CORREO,
+				SERVICIO_CORREO_NO_DISPONIBLE);
+	}
+
+	private String getBodyMailArchivoAdjunto(CorreoRequest correoRequest) {
+		Optional<CorreoResponse> correo = correoRepository.buscarCuerpoCorreo(correoRequest.getTipoCorreo());
+		String cuerpoCorreo = "";
+		String asunto = "";
+		if(correo.isPresent()) {
+			asunto = correo.get().getAsunto();
+			cuerpoCorreo = correo.get().getCuerpoCorreo().replace("reemplazarNombre", correoRequest.getNombre());
+		}
+
+        StringBuilder sbuilder = new StringBuilder();
+		for (int i = 0; i < correoRequest.getAdjuntos().size(); i++ ) {
+			sbuilder.append(" \"nombreAdjunto\":");
+			sbuilder.append("\"" + correoRequest.getAdjuntos().get(i).getNombreAdjunto() + "\", ");
+			sbuilder.append(" \"adjuntoBase64\":");
+			sbuilder.append("\"" + correoRequest.getAdjuntos().get(i).getAdjuntoBase64() + "\"");
+			if (i < correoRequest.getAdjuntos().size()-1)
+				sbuilder.append("},{\n");
+			}
+			
+		return "{ \"correoPara\": [\"" + correoRequest.getCorreoPara()+ "\"],"
+				+ " \"asunto\": \"" + asunto + "\", "
+				+ " \"cuerpoCorreo\": \"" + cuerpoCorreo + "\", "
+				+ " \"remitente\": \"" + remitente + "\", "
+				+ " \"adjuntos\": [ "
+				+ "{ " + sbuilder.toString() + " }"
+				+ " ] }";
+	}
 }

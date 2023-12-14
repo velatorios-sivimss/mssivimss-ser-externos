@@ -202,6 +202,16 @@ public class PeticionesController {
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));	
 	}
 	
+
+	@PostMapping("/enviar/correo/adjunto")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackCorreo")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackCorreo")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object> enviarCorreoAdjunto(@RequestBody CorreoRequest request,Authentication authentication) throws IOException {
+
+		Response<Object> response = peticionesServiceCorreo.envioCorreoArchivoAdjunto(request);		
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo().intValue())));	
+	}
 	
 	
 	
